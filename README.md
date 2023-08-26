@@ -4,13 +4,16 @@
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.aghajari/AnnotatedText.svg?label=Maven%20Central)](https://search.maven.org/artifact/io.github.aghajari/AnnotatedText/1.0.0/aar)
 [![Join the chat at https://gitter.im/Aghajari/community](https://badges.gitter.im/Aghajari/community.svg)](https://gitter.im/Aghajari/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
- A Jetpack Compose library to fully convert Android's Spanned into AnnotatedString
+ A Jetpack Compose library to fully convert Android's [Spanned](https://developer.android.com/reference/android/text/Spanned) into [AnnotatedString](https://developer.android.com/reference/kotlin/androidx/compose/ui/text/AnnotatedString).
+
+ You can use this library to display [Html.fromHtml(String)](https://developer.android.com/reference/android/text/Html) on Compose [Text](https://developer.android.com/jetpack/compose/text), <br>
+ Exactly similar to what was previously displayed on Android [TextView](https://developer.android.com/reference/android/widget/TextView).
 
  **Compose Text**   Vs   **Android TextView**<br>
 <img src="./compose.png" height=300 title="Compose Preview"> <img src="./android.png" height=300 title="Android Preview">
 
 ## Supported Spans
-**AnnotatedText** supports both CharacterStyle and ParagraphStyle spans.
+**AnnotatedText** supports all default android spans both [CharacterStyle](https://developer.android.com/reference/android/text/style/CharacterStyle) and [ParagraphStyle](https://developer.android.com/reference/android/text/style/ParagraphStyle) spans.
 
 **CharacterStyle** spans:
  - URLSpan
