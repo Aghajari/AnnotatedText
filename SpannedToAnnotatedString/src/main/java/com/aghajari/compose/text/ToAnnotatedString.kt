@@ -137,7 +137,11 @@ private fun Spanned.mapSpans(): Map<IntRange, List<Any>> {
     }
 
     return spansMap.toSortedMap { o1, o2 ->
-        o1.first.compareTo(o2.first)
+        if (o1.first == o2.first) {
+            o1.last.compareTo(o2.last)
+        } else {
+            o1.first.compareTo(o2.first)
+        }
     }
 }
 
