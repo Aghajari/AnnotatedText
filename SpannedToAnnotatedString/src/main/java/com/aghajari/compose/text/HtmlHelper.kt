@@ -1,6 +1,7 @@
 package com.aghajari.compose.text
 
 import android.text.Html
+import android.text.style.URLSpan
 import androidx.compose.ui.graphics.Color
 import androidx.core.text.HtmlCompat
 
@@ -16,17 +17,19 @@ fun String.fromHtml(
     tagHandler: Html.TagHandler? = null,
     spanMappers: SpanMapperMap? = null,
     linkColor: Color = Color.Blue,
-    isParagraphContentsEnabled: Boolean = true
+    isParagraphContentsEnabled: Boolean = true,
+    linkColorMapper: ((URLSpan) -> Color?)? = null
 ): ContentAnnotatedString {
 
     return HtmlCompat.fromHtml(
         this,
         flags,
         imageGetter,
-        tagHandler
+        tagHandler,
     ).asAnnotatedString(
         spanMappers,
         linkColor,
-        isParagraphContentsEnabled
+        isParagraphContentsEnabled,
+        linkColorMapper
     )
 }

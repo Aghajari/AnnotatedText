@@ -26,7 +26,8 @@ import androidx.compose.ui.text.buildAnnotatedString
 fun Spanned.asAnnotatedString(
     spanMappers: SpanMapperMap? = null,
     linkColor: Color = Color.Blue,
-    isParagraphContentsEnabled: Boolean = true
+    isParagraphContentsEnabled: Boolean = true,
+    linkColorMapper: ((URLSpan) -> Color?)? = null
 ): ContentAnnotatedString {
     val fixed = if (isParagraphContentsEnabled) {
         supportLeadingMarginSpans()
@@ -51,6 +52,7 @@ fun Spanned.asAnnotatedString(
                 spans = spans,
                 range = range,
                 linkColor = linkColor,
+                linkColorMapper = linkColorMapper,
                 urlSpanMapper = { urlSpan ->
                     hasUrl = true
                     addURL(urlSpan, range)
@@ -92,19 +94,23 @@ private fun mergeSpans(
     spans: List<Any>,
     range: IntRange,
     linkColor: Color,
+    linkColorMapper: ((URLSpan) -> Color?)? = null,
     urlSpanMapper: (URLSpan) -> Unit,
     inlineContentMapper: (InlineContent) -> Unit,
     paragraphContentMapper: ((ParagraphContent) -> Unit)?,
     spanMapper: SpanMapperMap
 ): SpanStyle {
-    val style = MutableSpanStyle(linkColor)
+    val style = MutableSpanStyle(
+        linkColor = linkColor,
+        linkColorMapper = linkColorMapper
+    )
 
     spans.forEach { span ->
         when (span) {
             is ImageSpan ->
                 inlineContentMapper(span.asInlineContent(range))
             is URLSpan -> {
-                style.isUrl = true
+                style.urlSpan = span
                 urlSpanMapper(span)
             }
             is LeadingMarginSpan -> {

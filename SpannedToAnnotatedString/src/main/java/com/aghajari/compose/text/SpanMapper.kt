@@ -43,7 +43,7 @@ import kotlin.reflect.KClass
  */
 @Suppress("MemberVisibilityCanBePrivate")
 class MutableSpanStyle internal constructor(
-    var linkColor: Color,
+    var linkColor: Color = Color.Unspecified,
     var color: Color = Color.Unspecified,
     var fontSize: TextUnit = TextUnit.Unspecified,
     var fontWeight: FontWeight? = null,
@@ -58,15 +58,21 @@ class MutableSpanStyle internal constructor(
     var textGeometricTransform: TextGeometricTransform? = null,
     var localeList: LocaleList? = null,
     var shadow: Shadow? = null,
-    var appearance: SpanStyle? = null
+    var appearance: SpanStyle? = null,
+    var linkColorMapper: ((URLSpan) -> Color?)? = null
 ) {
 
-    internal var isUrl: Boolean = false
+    internal var urlSpan: URLSpan? = null
 
     fun toSpanStyle(): SpanStyle {
         return SpanStyle(
-            color = if (isUrl && color.isUnspecified) {
-                linkColor
+            color = if (urlSpan != null && color.isUnspecified) {
+                val mappedColor = linkColorMapper?.invoke(requireNotNull(urlSpan))
+                if (mappedColor != null && mappedColor.isUnspecified.not()) {
+                    mappedColor
+                } else {
+                    linkColor
+                }
             } else {
                 color
             },
