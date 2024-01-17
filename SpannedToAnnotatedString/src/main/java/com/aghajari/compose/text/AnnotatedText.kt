@@ -285,17 +285,23 @@ fun Modifier.annotatedTextParagraphContents(
     return drawBehind {
         layoutResult.value?.let { layoutResult ->
             text.paragraphContents.forEach { content ->
-                val startLine = layoutResult.getLineForOffset(
-                    offset = content.start
+                val startLine = layoutResult.getLineForOffsetInBounds(
+                    offset = content.start,
+                    checkIfDelimited = true
                 )
+                if (startLine < 0) {
+                    // Paragraph delimited by maxLines,
+                    // ignore the content of the next paragraphs
+                    return@drawBehind
+                }
 
                 if (layoutResult.getLineStart(startLine) == content.start) {
-                    val firstEndLine = layoutResult.getLineForOffset(
+                    val firstEndLine = layoutResult.getLineForOffsetInBounds(
                         offset = content.end - 1
                     )
                     val endOffset = layoutResult.getLineEnd(firstEndLine)
                     val endLine = if (endOffset == content.end) {
-                        val nextEndLine = layoutResult.getLineForOffset(
+                        val nextEndLine = layoutResult.getLineForOffsetInBounds(
                             offset = content.end
                         )
                         if (nextEndLine - firstEndLine > 1) {
@@ -307,7 +313,11 @@ fun Modifier.annotatedTextParagraphContents(
                         firstEndLine
                     }
 
-                    val dir = layoutResult.getParagraphDirection(content.start)
+                    val dir = try {
+                        layoutResult.getParagraphDirection(content.start)
+                    } catch (ignore: Exception) {
+                        return@drawBehind
+                    }
                     content.drawer.onDraw(
                         this@drawBehind,
                         ParagraphLayoutInfo(
