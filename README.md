@@ -1,7 +1,7 @@
 # AnnotatedText
 [![Platform](https://img.shields.io/badge/platform-android-green.svg)](http://developer.android.com/index.html)
 [![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=21)
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.aghajari/AnnotatedText.svg?label=Maven%20Central)](https://search.maven.org/artifact/io.github.aghajari/AnnotatedText/1.0.2/aar)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.aghajari/AnnotatedText.svg?label=Maven%20Central)](https://search.maven.org/artifact/io.github.aghajari/AnnotatedText/1.0.3/aar)
 [![Join the chat at https://gitter.im/Aghajari/community](https://badges.gitter.im/Aghajari/community.svg)](https://gitter.im/Aghajari/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
  A Jetpack Compose library to fully convert Android's [Spanned](https://developer.android.com/reference/android/text/Spanned) into [AnnotatedString](https://developer.android.com/reference/kotlin/androidx/compose/ui/text/AnnotatedString).
@@ -46,7 +46,7 @@
 
 Gradle
 ```gradle
-implementation 'io.github.aghajari:AnnotatedText:1.0.2'
+implementation 'io.github.aghajari:AnnotatedText:1.0.3'
 ```
 
 Maven
@@ -54,7 +54,7 @@ Maven
 <dependency>
   <groupId>io.github.aghajari</groupId>
   <artifactId>AnnotatedText</artifactId>
-  <version>1.0.2</version>
+  <version>1.0.3</version>
   <type>pom</type>
 </dependency>
 ```
