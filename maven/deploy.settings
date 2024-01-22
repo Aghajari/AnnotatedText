@@ -1,6 +1,6 @@
 siteUrl = https://github.com/Aghajari/AnnotatedText
 gitUrl = https://github.com/Aghajari/AnnotatedText.git
-version = 1.0.2
+version = 1.0.3
 groupId = io.github.aghajari
 licenses = ['Apache-2.0']
 id = AnnotatedText
