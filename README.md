@@ -39,6 +39,9 @@
  - IconMarginSpan
  - DrawableMarginSpan
  - LeadingMarginSpan.Standard
+ - AlignmentSpan (v1.0.4)
+ - LineBackgroundSpan (v1.0.4)
+ - LineHeightSpan (v1.0.4)
 
 ## Installation
 
