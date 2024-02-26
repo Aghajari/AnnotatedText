@@ -1,11 +1,15 @@
 package com.aghajari.compose.text
 
 import android.text.Spanned
+import android.text.style.AlignmentSpan
 import android.text.style.BulletSpan
 import android.text.style.IconMarginSpan
 import android.text.style.DrawableMarginSpan
 import android.text.style.LeadingMarginSpan
+import android.text.style.LineBackgroundSpan
+import android.text.style.LineHeightSpan
 import android.text.style.QuoteSpan
+import android.text.style.ParagraphStyle as AndroidParagraphStyle
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.ParagraphStyle
 import java.lang.IllegalArgumentException
@@ -46,8 +50,8 @@ import java.lang.IllegalArgumentException
  * Done
  * ```
  */
-internal fun Spanned.supportLeadingMarginSpans(): Spanned {
-    val spans = getSpans(0, length, LeadingMarginSpan::class.java)
+internal fun Spanned.supportParagraphStyleSpans(): Spanned {
+    val spans = getSpans(0, length, AndroidParagraphStyle::class.java)
     spans.sortBy { getSpanStart(it) }
 
     return if (spans.isNotEmpty()) {
@@ -64,10 +68,12 @@ internal fun Spanned.supportLeadingMarginSpans(): Spanned {
             spans.forEach { span ->
                 var start = getSpanStart(span)
                 if (start < reserved) {
-                    removeSpan(span)
+                    if (span.isSupportedLeadingMarginSpan()) {
+                        removeSpan(span)
+                    }
                 } else {
                     var remove = when {
-                        span.isSupportedLeadingMarginSpan().not() -> -1
+                        span.isSupportedParagraphStyle().not() -> -1
                         start == 0 -> 0
                         start == reserved -> 0
                         get(start - 1) == NEW_LINE && start == reserved + 1 -> {
@@ -141,12 +147,19 @@ private const val NEW_LINE = '\n'
 private const val CRLF = "\r\n"
 private const val EMPTY = ""
 
-internal fun LeadingMarginSpan.isSupportedLeadingMarginSpan(): Boolean {
+internal fun AndroidParagraphStyle.isSupportedLeadingMarginSpan(): Boolean {
     return this is QuoteSpan ||
             this is BulletSpan ||
             this is IconMarginSpan ||
             this is DrawableMarginSpan ||
             this is LeadingMarginSpan.Standard
+}
+
+internal fun AndroidParagraphStyle.isSupportedParagraphStyle(): Boolean {
+    return isSupportedLeadingMarginSpan() ||
+            this is AlignmentSpan ||
+            this is LineBackgroundSpan ||
+            this is LineHeightSpan
 }
 
 internal fun toParagraphContent(
@@ -159,13 +172,16 @@ internal fun toParagraphContent(
         is IconMarginSpan -> span.asParagraphContent(range)
         is DrawableMarginSpan -> span.asParagraphContent(range)
         is LeadingMarginSpan.Standard -> span.asParagraphContent(range)
+        is AlignmentSpan -> span.asParagraphContent(range)
+        is LineBackgroundSpan -> span.asParagraphContent(range)
+        is LineHeightSpan -> span.asParagraphContent(range)
         else -> throw IllegalArgumentException(
             "${span.javaClass.name} is not supported!"
         )
     }
 }
 
-private fun LeadingMarginSpan.supportsInternalBreakLine(): Boolean {
-    return isSupportedLeadingMarginSpan() &&
+private fun AndroidParagraphStyle.supportsInternalBreakLine(): Boolean {
+    return isSupportedParagraphStyle() &&
             this !is BulletSpan
 }

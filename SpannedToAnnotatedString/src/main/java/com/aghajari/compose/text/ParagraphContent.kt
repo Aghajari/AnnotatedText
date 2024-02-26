@@ -1,12 +1,12 @@
 package com.aghajari.compose.text
 
+import android.text.Layout
+import android.text.style.AlignmentSpan
 import android.text.style.LeadingMarginSpan
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.style.ResolvedTextDirection
-import androidx.compose.ui.text.style.TextIndent
+import androidx.compose.ui.text.style.TextAlign
 
 /**
  * A Callback to render the leading margin.
@@ -26,11 +26,13 @@ fun interface ParagraphContentDrawer {
  * character to the last character of a single paragraph.
  */
 class ParagraphContent(
-    val firstLeadingMargin: Int,
-    val restLeadingMargin: Int,
     val start: Int,
     val end: Int,
-    val drawer: ParagraphContentDrawer
+    val firstLeadingMargin: Int? = null,
+    val restLeadingMargin: Int? = null,
+    val drawer: ParagraphContentDrawer? = null,
+    val alignment: TextAlign? = null,
+    val lineHeight: Int? = null
 )
 
 /**
@@ -59,27 +61,6 @@ class ParagraphLayoutInfo(
         }
 }
 
-internal fun AnnotatedString.Builder.addParagraphContent(
-    paragraphContent: ParagraphContent
-) {
-    with(paragraphContent) {
-        val first = firstLeadingMargin.pxToSp()
-        val rest = restLeadingMargin.pxToSp()
-        if (first.value != 0f || rest.value != 0f) {
-            addStyle(
-                style = ParagraphStyle(
-                    textIndent = TextIndent(
-                        firstLine = first,
-                        restLine = rest
-                    )
-                ),
-                start = start,
-                end = end
-            )
-        }
-    }
-}
-
 internal fun LeadingMarginSpan.asParagraphContent(
     range: IntRange,
     drawer: ParagraphContentDrawer
@@ -99,5 +80,19 @@ internal fun LeadingMarginSpan.Standard.asParagraphContent(
     return asParagraphContent(
         range = range,
         drawer = { _, _ -> }
+    )
+}
+
+internal fun AlignmentSpan.asParagraphContent(
+    range: IntRange
+): ParagraphContent {
+    return ParagraphContent(
+        start = range.first,
+        end = range.last,
+        alignment = when (requireNotNull(alignment)) {
+            Layout.Alignment.ALIGN_NORMAL -> TextAlign.Start
+            Layout.Alignment.ALIGN_OPPOSITE -> TextAlign.End
+            Layout.Alignment.ALIGN_CENTER -> TextAlign.Center
+        }
     )
 }

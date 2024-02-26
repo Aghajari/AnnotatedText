@@ -18,7 +18,9 @@ import android.text.style.URLSpan
 import android.text.style.UnderlineSpan
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.graphics.isUnspecified
+import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -27,8 +29,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.text.style.BaselineShift
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextGeometricTransform
+import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.em
 import kotlin.reflect.KClass
@@ -62,13 +66,14 @@ class MutableSpanStyle internal constructor(
     var linkColorMapper: ((URLSpan) -> Color?)? = null
 ) {
 
+    val paragraphContents = mutableListOf<ParagraphContent>()
     internal var urlSpan: URLSpan? = null
 
     fun toSpanStyle(): SpanStyle {
         return SpanStyle(
             color = if (urlSpan != null && color.isUnspecified) {
                 val mappedColor = linkColorMapper?.invoke(requireNotNull(urlSpan))
-                if (mappedColor != null && mappedColor.isUnspecified.not()) {
+                if (mappedColor != null && mappedColor.isSpecified) {
                     mappedColor
                 } else {
                     linkColor
@@ -91,6 +96,35 @@ class MutableSpanStyle internal constructor(
             textGeometricTransform = textGeometricTransform
         ).merge(appearance)
     }
+
+    fun toParagraphStyle(): ParagraphStyle? {
+        if (hasParagraphStyle().not()) {
+            return null
+        }
+
+        var first = 0
+        var rest = 0
+        var lineHeight: Int? = null
+        var alignment: TextAlign? = null
+        paragraphContents.forEach { paragraph ->
+            first = paragraph.firstLeadingMargin ?: first
+            rest = paragraph.restLeadingMargin ?: rest
+            lineHeight = paragraph.lineHeight ?: lineHeight
+            alignment = paragraph.alignment ?: alignment
+        }
+
+        val indent = if (first != 0 || rest != 0) {
+            TextIndent(firstLine = first.pxToSp(), restLine = rest.pxToSp())
+        } else null
+
+        return ParagraphStyle(
+            textAlign = alignment,
+            textIndent = indent,
+            lineHeight = lineHeight?.pxToSp() ?: TextUnit.Unspecified
+        )
+    }
+
+    fun hasParagraphStyle() = paragraphContents.isNotEmpty()
 }
 
 internal typealias SpanMapperMap = Map<KClass<*>, SpanMapper<*>?>

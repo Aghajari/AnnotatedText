@@ -262,7 +262,7 @@ fun Modifier.annotatedTextClickable(
     val onClick = text.toURLClickable(
         onURLClick = onURLClick ?: defaultOnURLClick(LocalContext.current)
     )
-    pointerInput(onClick) {
+    this.pointerInput(onClick) {
         detectTapGestures { pos ->
             layoutResult.value?.let { layoutResult ->
                 onClick(layoutResult.getOffsetForPosition(pos))
@@ -295,7 +295,7 @@ fun Modifier.annotatedTextParagraphContents(
                     return@drawBehind
                 }
 
-                if (layoutResult.getLineStart(startLine) == content.start) {
+                if (content.drawer != null && layoutResult.getLineStart(startLine) == content.start) {
                     val firstEndLine = layoutResult.getLineForOffsetInBounds(
                         offset = content.end - 1
                     )
