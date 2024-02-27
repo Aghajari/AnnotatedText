@@ -64,6 +64,18 @@ fun Spanned.asAnnotatedString(
                     inlineContent.add(content)
                     addInlineContent(content)
                 },
+                paragraphContentMapper = { content ->
+                    // If the ParagraphContent represents a drawer-only configuration,
+                    // we don't need to add a ParagraphStyle to the AnnotatedString.
+                    // Instead, we can directly add the drawer content to the output list.
+                    // Since drawer-only content doesn't affect paragraph styling or overlap
+                    // with other paragraphs, no further checks are needed in such cases.
+                    val isDrawerOnly = content.isDrawerOnly()
+                    if (isDrawerOnly) {
+                        paragraphContent.add(content)
+                    }
+                    isDrawerOnly
+                },
                 isParagraphContentsEnabled,
                 mappers
             ).let {
@@ -102,6 +114,7 @@ private fun mergeSpans(
     linkColorMapper: ((URLSpan) -> Color?)? = null,
     urlSpanMapper: (URLSpan) -> Unit,
     inlineContentMapper: (InlineContent) -> Unit,
+    paragraphContentMapper: (ParagraphContent) -> Boolean,
     supportsParagraphContent: Boolean,
     spanMapper: SpanMapperMap
 ): MutableSpanStyle {
@@ -123,7 +136,9 @@ private fun mergeSpans(
                     span.isSupportedParagraphStyle()
                 ) {
                     val content = toParagraphContent(span, range)
-                    style.paragraphContents.add(content)
+                    if (paragraphContentMapper(content).not()) {
+                        style.paragraphContents.add(content)
+                    }
                 }
             }
         }

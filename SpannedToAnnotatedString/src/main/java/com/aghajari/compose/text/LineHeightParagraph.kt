@@ -3,6 +3,7 @@ package com.aghajari.compose.text
 import android.graphics.Paint
 import android.text.style.LineHeightSpan
 
+// A drawer-only paragraph content
 internal fun LineHeightSpan.asParagraphContent(
     range: IntRange
 ): ParagraphContent {

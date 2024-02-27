@@ -295,7 +295,9 @@ fun Modifier.annotatedTextParagraphContents(
                     return@drawBehind
                 }
 
-                if (content.drawer != null && layoutResult.getLineStart(startLine) == content.start) {
+                if (content.drawer != null && (content.isDrawerOnly() ||
+                            layoutResult.getLineStart(startLine) == content.start)
+                ) {
                     val firstEndLine = layoutResult.getLineForOffsetInBounds(
                         offset = content.end - 1
                     )

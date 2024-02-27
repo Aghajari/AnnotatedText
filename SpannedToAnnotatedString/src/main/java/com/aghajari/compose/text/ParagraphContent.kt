@@ -36,8 +36,22 @@ class ParagraphContent(
 )
 
 /**
- * The data class which holds paragraph area and
- * text layout result.
+ * Checks if the given [ParagraphContent] represents a drawer-only configuration.
+ *
+ * A drawer-only configuration implies that only the drawer content is present in the paragraph,
+ * and all other styling properties such as leading margins, alignment, and line height are null.
+ * Note that a drawer-only [ParagraphContent] won't add a new ParagraphStyle to an AnnotatedString.
+ */
+internal fun ParagraphContent.isDrawerOnly(): Boolean {
+    return drawer != null &&
+            firstLeadingMargin == null &&
+            restLeadingMargin == null &&
+            alignment == null &&
+            lineHeight == null
+}
+
+/**
+ * The data class which holds paragraph area and text layout result.
  */
 @Suppress("unused")
 class ParagraphLayoutInfo(
