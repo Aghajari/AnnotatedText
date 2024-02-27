@@ -3,6 +3,7 @@ package com.aghajari.compose.text
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.text.style.IconMarginSpan as AndroidIconMarginSpan
 import android.text.style.DrawableMarginSpan as AndroidDrawableMarginSpan
 import androidx.compose.ui.geometry.Offset
@@ -66,6 +67,8 @@ private fun AndroidIconMarginSpan.getImage(): ImageBitmap? {
     return try {
         if (this is IconMarginSpan) {
             bitmap.asImageBitmap()
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            bitmap.asImageBitmap()
         } else {
             javaClass.getDeclaredField("mBitmap")
                 .run {
@@ -84,6 +87,8 @@ private fun AndroidDrawableMarginSpan.getImage(): ImageBitmap? {
     return try {
         if (this is DrawableMarginSpan) {
             drawable.toImageBitmap()
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            drawable.toImageBitmap()
         } else {
             javaClass.getDeclaredField("mDrawable")
                 .run {
@@ -98,11 +103,11 @@ private fun AndroidDrawableMarginSpan.getImage(): ImageBitmap? {
 }
 
 class IconMarginSpan(
-    val bitmap: Bitmap,
+    @JvmField val bitmap: Bitmap,
     padding: Int = 0
 ) : AndroidIconMarginSpan(bitmap, padding)
 
 class DrawableMarginSpan(
-    val drawable: Drawable,
+    @JvmField val drawable: Drawable,
     padding: Int = 0
 ) : AndroidDrawableMarginSpan(drawable, padding)

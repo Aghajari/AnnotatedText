@@ -10,15 +10,13 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.util.TypedValueCompat
 import kotlin.math.abs
 import kotlin.math.min
 
 internal val localScaledDensity: Float
     @Composable
     get() = with(LocalDensity.current) { density * fontScale }
-
-internal val scaledDensity: Float
-    get() = Resources.getSystem().displayMetrics.scaledDensity
 
 internal val density: Float
     get() = Resources.getSystem().displayMetrics.density
@@ -28,11 +26,14 @@ internal fun Int.dpToPx(): Float {
 }
 
 internal fun Float.pxToSp(): TextUnit {
-    return (this / scaledDensity).sp
+    return TypedValueCompat.pxToSp(
+        this,
+        Resources.getSystem().displayMetrics
+    ).sp
 }
 
 internal fun Int.pxToSp(): TextUnit {
-    return (this / scaledDensity).sp
+    return toFloat().pxToSp()
 }
 
 @Composable

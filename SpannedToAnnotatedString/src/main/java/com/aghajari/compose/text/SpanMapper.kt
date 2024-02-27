@@ -118,7 +118,7 @@ class MutableSpanStyle internal constructor(
         } else null
 
         return ParagraphStyle(
-            textAlign = alignment,
+            textAlign = alignment ?: TextAlign.Unspecified,
             textIndent = indent,
             lineHeight = lineHeight?.pxToSp() ?: TextUnit.Unspecified
         )
