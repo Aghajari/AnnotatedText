@@ -211,5 +211,5 @@ private fun MutableList<ParagraphStyleHolder>.safeAdd(newStyle: ParagraphStyleHo
 private fun IntRange.overlap(other: IntRange): Boolean {
     val max = maxOf(first, last)
     val min = minOf(first, last)
-    return (other.first in min..max) || (other.last in min..max)
+    return (other.first in min..<max) || (other.last in min..<max)
 }
