@@ -26,10 +26,16 @@ internal fun Int.dpToPx(): Float {
 }
 
 internal fun Float.pxToSp(): TextUnit {
-    return TypedValueCompat.pxToSp(
-        this,
-        Resources.getSystem().displayMetrics
-    ).sp
+    return try {
+        TypedValueCompat.pxToSp(
+            this,
+            Resources.getSystem().displayMetrics
+        ).sp
+    } catch (_: Throwable) {
+        // This might happen on compose previews
+        @Suppress("DEPRECATION")
+        (this / Resources.getSystem().displayMetrics.scaledDensity).sp
+    }
 }
 
 internal fun Int.pxToSp(): TextUnit {
